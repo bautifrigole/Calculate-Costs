@@ -1,4 +1,5 @@
 # Calculate Costs
+
 ## Description
 A web application for distributing expenses among groups of friends and settling bills. Built using the PERN stack (Postgres, Express, React, Node JS).
 
