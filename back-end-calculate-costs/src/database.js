@@ -249,5 +249,39 @@ async function addUserLog(description, user_operation_id, user_id) {
     return result;
 }
 
-module.exports = { existsUser, existsUserByID, modifyPassword, getUserByID, getUserByIDKey, 
-    getUserAndRoleByID, getUserAndRoleByIDKey, addUser, setUserLastLogin, getUserLastLogin, getUsersWithLastName, getDocumentTypeID, addUserAdmin, getUserAdmin, updateUserStatus, updateUser, getDocumentTypes, getRoles, getDocumentType, getRolesWithName, existsRoleName, addRole, updateRoleStatus, getRoleByID, updateRole, existsAdminRoute, addAdminRoute, addAdminLog, existsUserRoute, addUserRoute, addUserLog };
+async function existsUsersGroupByID(id) {
+    const result = await makeQuery(
+        "SELECT * FROM users_group WHERE group_id = " + id + ";"
+    );
+    return result;
+}
+
+async function addUsersGroup(id, name, password, description) {    
+    const result = await makeQuery(
+        "INSERT INTO users_group (group_id, group_name, group_password, description) values ('" + id + "', '" + name  + "', '" + password + "', '" + description + ") RETURNING group_id;"
+    );
+    return result;
+}
+
+async function existsUsersGroupMember(member_name, group_id) {
+    const result = await makeQuery(
+        "SELECT * FROM users_group_member WHERE group_id = '" + group_id + "' AND member_name = '" + member_name + "';"
+    );
+    return result;
+}
+
+async function addUsersGroupMember(member_name, group_id) {    
+    const result = await makeQuery(
+        "INSERT INTO users_group_member (member_name, group_id) values ('" + member_name + "', '" + group_id + ") RETURNING member_id;"
+    );
+    return result;
+}
+
+async function addExpense(group_id, member_id, description, amount) {
+    const result = await makeQuery(
+        "INSERT INTO expense (group_id, member_id, description, expense_amount) values ('" + group_id + "', '" + member_id + "', '" + description + "', '" + amount + ") RETURNING expense_id;"
+    );
+    return result;
+}
+
+module.exports = { existsUser, existsUserByID, existsUsersGroupByID, addUsersGroup, existsUsersGroupMember, addUsersGroupMember, addExpense };
