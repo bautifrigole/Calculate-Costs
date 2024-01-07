@@ -22,6 +22,9 @@ const config: Config = {
         'cream': '#D9D9D9',
         'cream-dark': '#6A6A6A',
       },
+      height: {
+        '40p': '40%',
+      }
       
     },
     

@@ -1,35 +1,94 @@
-import Image from "next/image";
+"use client";
 import Link from "next/link";
-import { FcGoogle } from "react-icons/fc";
-import TypingLogo from "./typingLogo";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
+import { Input } from "@nextui-org/react";
+import { useState } from "react";
+import { IoMdEye } from "react-icons/io";
+import { IoMdEyeOff } from "react-icons/io";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+interface FormData {
+  email: string;
+  password: string;
+}
 
 export default function Login() {
-  return (
-    <main className=" h-screen w-screen flex flex-col justify-center items-center ">
-      <div className=" top-1/4 absolute">
-        <TypingLogo />
-      </div>
-      <div className=" bottom-0 absolute h-1/3 bg-gray-dark  rounded-t-xl w-screen flex flex-col items-center justify-center gap-9 ">
-        <div className="flex flex-col w-full items-center gap-3">
-          <Link
-            href="/register"
-            className=" flex justify-center items-center gap-3 ease-in-out duration-200   bg-slate-100 rounded-full w-3/4 sm:w-2/4 text-gray-950 py-3 font-regular hover:bg-gray-lightest hover:text-white"
-          >
-            <FcGoogle size="1.5rem" />
-            Iniciar sesión con Google
-          </Link>
-          <Link
-            href="/register"
-            className="flex justify-center bg-slate-100 rounded-full w-3/4 sm:w-2/4 text-gray-950 py-3 font-regular hover:bg-gray-lightest hover:text-white ease-in-out duration-200"
-          >
-            Registrarse
-          </Link>
-        </div>
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-        <Link href="/register" className="hover:underline underline-offset-2 ">
-          Entrar como invitado{" "}
-        </Link>
+  const schema = z.object({
+    email: z.string().email("Ingrese un correo válido"),
+    password: z
+      .string()
+      .min(8, "La contraseña debe tener mínimo 8 caracteres")
+      .max(30),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  const toggleVisibility = () => setIsPasswordVisible(!isPasswordVisible);
+  const router = useRouter();
+  return (
+    <main className=" h-screen w-screen flex flex-col justify-center items-center">
+      <h1 className="text-4xl font-medium mb-10">Inicia sesión</h1>
+      <div className="flex flex-col gap-5 w-2/3 lg:w-1/2">
+        <form
+          onSubmit={handleSubmit((data) => {
+            console.log(data);
+            router.push("/dataFill");
+          })}
+          className="flex flex-col justify-center items-center gap-3"
+        >
+          <Input
+            label="Correo electrónico"
+            isInvalid={!!errors.email}
+            errorMessage={!!errors.email ? errors.email.message : null}
+            {...register("email", { required: true })}
+          />
+          <Input
+            label="Contraseña"
+            isInvalid={!!errors.password}
+            errorMessage={!!errors.password ? errors.password.message : null}
+            {...register("password", {
+              required: true,
+              minLength: { value: 8, message: " Mas largo" },
+            })}
+            endContent={
+              <button
+                className="focus:outline-none"
+                type="button"
+                onClick={toggleVisibility}
+              >
+                {isPasswordVisible ? (
+                  <IoMdEye className="text-2xl text-default-400 pointer-events-none mb-1" />
+                ) : (
+                  <IoMdEyeOff className="text-2xl text-default-400 pointer-events-none mb-1" />
+                )}
+              </button>
+            }
+            type={isPasswordVisible ? "text" : "password"}
+          />
+
+          <button
+            className="flex justify-center mt-5 bg-gray-lightest hover:bg-gray-light rounded-full text-slate-50   py-3 font-regular   ease-in-out duration-200 w-full"
+            type="submit"
+          >
+            Ingresar
+          </button>
+        </form>
       </div>
+
+      <Link
+        href="/.."
+        className="hover:underline underline-offset-2 absolute
+         bottom-0 pb-20   "
+      >
+        Elegir otro método
+      </Link>
     </main>
   );
 }

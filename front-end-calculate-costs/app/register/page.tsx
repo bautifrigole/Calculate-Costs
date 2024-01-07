@@ -6,7 +6,7 @@ import { Input } from "@nextui-org/react";
 import { useState } from "react";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 interface FormData {
   email: string;
@@ -49,7 +49,7 @@ export default function Register() {
         <form
           onSubmit={handleSubmit((data) => {
             console.log(data);
-            router.push("/register/dataFill");
+            router.push("/dataFill");
           })}
           className="flex flex-col justify-center items-center gap-3"
         >
